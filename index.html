@@ -19,22 +19,22 @@
     <div class="container miestilo" id="contenedor">
       <div class="row justify-content-center mt-5">
         <div class="col-3 text-center">
-          <router-link to="/" exact>
-            <div class="bg-success rounded p-2 mx-3">
+          <router-link to="/" exact active-class="activo">
+            <div class="minav rounded p-2 mx-3">
               Home
             </div>
           </router-link>
         </div>
         <div class="col-3 text-center">
-          <router-link to="/miscompras">
-            <div class="bg-success rounded p-2 mx-3">
+          <router-link to="/miscompras" active-class="activo">
+            <div class="minav rounded p-2 mx-3">
               Mis Compras
             </div>
           </router-link>
         </div>
         <div class="col-3 text-center">
-          <router-link to="/info">
-            <div class="bg-success rounded p-2 mx-3">
+          <router-link to="/info" active-class="activo">
+            <div class="minav rounded p-2 mx-3">
               Contacto
             </div>
           </router-link>
@@ -151,7 +151,8 @@
             <comp-elementolista
               v-on:clickdelete="Eliminar(item)"
               v-on:clickcheck="CambiarEstado(item)"
-              v-for="item in listado"
+              v-for="(item,index) in listado"
+              :key="index"
               :producto="item"
             ></comp-elementolista>
           </template>

@@ -1,3 +1,5 @@
+const listadoglobal = [];
+
 Vue.component("comp-elementolista", {
   props: ["producto"],
   template: "#plantilla-com-elementolista",
@@ -28,7 +30,7 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
       articulo: "",
       cantidad: 0,
       prioridad: "Baja",
-      listado: []
+      listado: listadoglobal
     };
   },
   computed: {
@@ -77,8 +79,14 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
 const ListadoComprasHechas = Vue.component("comp-listado-comprashechas", {
   data() {
     return {
-      titulo: "Lista de Compras Hechas"
+      titulo: "Lista de Compras Hechas",
+      listado: listadoglobal
     };
+  },
+  computed: {
+    ListadoHechas() {
+      return this.listado.filter(item => item.estado);
+    }
   },
   /*html*/
   template: `
@@ -89,6 +97,10 @@ const ListadoComprasHechas = Vue.component("comp-listado-comprashechas", {
       {{ titulo }}
     </h1>
     </div>
+    <comp-elementolista
+      v-for="(articulo, index) in ListadoHechas" :key="index"
+      :producto="articulo">
+    </comp-elementolista>
   </div>
   `
 });

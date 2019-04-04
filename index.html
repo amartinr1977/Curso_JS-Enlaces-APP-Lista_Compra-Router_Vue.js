@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>APP Lista Compra</title>
+    <link rel="stylesheet" href="css/mi.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container miestilo" id="contenedor">
+      <div class="row justify-content-center mt-5">
+        <div class="col-3 text-center">
+          <router-link to="/" exact>
+            <div class="bg-success rounded p-2 mx-3">
+              Home
+            </div>
+          </router-link>
+        </div>
+        <div class="col-3 text-center">
+          <router-link to="/miscompras">
+            <div class="bg-success rounded p-2 mx-3">
+              Mis Compras
+            </div>
+          </router-link>
+        </div>
+        <div class="col-3 text-center">
+          <router-link to="/info">
+            <div class="bg-success rounded p-2 mx-3">
+              Contacto
+            </div>
+          </router-link>
+        </div>
+      </div>
+      <router-view></router-view>
+      <pre>{{ $data }}</pre>
+    </div>
+
+    <template id="plantilla-barra-progreso">
+      <div id="barraprogreso" class="progress mt-2" style="height: 25px;">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          v-bind:style="{ 'width' : porcentaje + '%' }"
+          v-bind:aria-valuenow="porcentaje"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          {{ porcentaje }}
+        </div>
+      </div>
+    </template>
+    <template id="plantilla-mensaje-error">
+      <div class="alert alert-danger">
+        <i class="material-icons align-middle">list</i>
+        <slot></slot>
+      </div>
+    </template>
+    <template id="plantilla-com-elementolista">
+      <div
+        v-bind:class="['noseleccionable', 'alert', 'alert-success', producto.estado ? 'opacidad' : '']"
+      >
+        <i class="material-icons align-middle">list</i>
+        <b>{{ producto.art }}</b>
+        <span class="badge badge-primary"> {{ producto.can }}</span>
+        <span
+          style="padding: 10px;  background-color: orange; border-radius: 10%"
+        >
+          {{ producto.pri }}
+        </span>
+        <span id="identificador" style="display: none">{{ producto.id }}</span>
+        <i
+          v-on:click="EliminarElemento"
+          class="material-icons align-middle float-right"
+          style="font-size: 1.5em; cursor: pointer"
+          >delete
+        </i>
+        <i
+          @click="CambiarEstilo"
+          v-bind:class="['material-icons', 'align-middle', 'float-right', producto.estado ? 'mired' : 'miamarillo' ]"
+          style="font-size: 1.5em; cursor: pointer;"
+          >check_circle</i
+        >
+      </div>
+    </template>
+
+    <template id="t-listado-compra">
+      <div>
+        <div class="row cabecera justify-content-center mt-5" id="cabecera">
+          <h1 id="titulo1">
+            <i class="material-icons" style="font-size: 1em">shopping_cart</i>
+            {{ titulo }}
+          </h1>
+        </div>
+        <form id="formulario">
+          <div id="botones" class="row container form-group">
+            <div class="col-5">
+              <input
+                type="text"
+                v-model="articulo"
+                class="form-control"
+                placeholder="Indica un Articulo a comprar"
+              />
+            </div>
+            <div class="col-3">
+              <input
+                type="number"
+                class="form-control"
+                v-model="cantidad"
+                placeholder="Cantidad"
+              />
+            </div>
+            <div class="col-2">
+              <select class="form-control" v-model="prioridad">
+                <option value="Baja" selected>Baja</option>
+                <option value="Alta">Alta</option>
+                <option value="Urgente">Urgente</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <button
+                id="agregar"
+                class="btn btn-primary form-control"
+                v-bind:disabled="articulo.length === 0"
+                v-on:click.prevent="Agregar"
+              >
+                Añadir
+              </button>
+            </div>
+          </div>
+        </form>
+        <div
+          id="listacompra"
+          class="listacompra rounded"
+          style="padding: 15px; background-color: aquamarine"
+        >
+          <template v-if="listado.length === 0">
+            <mensaje-error>
+              No hay Articulos que comprar por ahora ...
+            </mensaje-error>
+          </template>
+          <template v-else>
+            <comp-elementolista
+              v-on:clickdelete="Eliminar(item)"
+              v-on:clickcheck="CambiarEstado(item)"
+              v-for="item in listado"
+              :producto="item"
+            ></comp-elementolista>
+          </template>
+        </div>
+
+        <barra-progreso
+          v-show="listado.length > 0"
+          v-bind:porcentaje="Porcentaje"
+        ></barra-progreso>
+      </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>

@@ -97,7 +97,7 @@
         <div class="row cabecera justify-content-center mt-5" id="cabecera">
           <h1 id="titulo1">
             <i class="material-icons" style="font-size: 1em">shopping_cart</i>
-            {{ titulo }}
+            {{ mititulo }} y {{ mitexto }}
           </h1>
         </div>
         <form id="formulario">
@@ -142,16 +142,16 @@
           class="listacompra rounded"
           style="padding: 15px; background-color: aquamarine"
         >
-          <template v-if="listado.length === 0">
+          <template v-if="listadostore.length === 0">
             <mensaje-error>
               No hay Articulos que comprar por ahora ...
             </mensaje-error>
           </template>
           <template v-else>
             <comp-elementolista
-              v-on:clickdelete="Eliminar(item)"
+              v-on:clickdelete="EliminarStore(item)"
               v-on:clickcheck="CambiarEstado(item)"
-              v-for="(item,index) in listado"
+              v-for="(item,index) in listadostore"
               :key="index"
               :producto="item"
             ></comp-elementolista>
@@ -159,7 +159,7 @@
         </div>
 
         <barra-progreso
-          v-show="listado.length > 0"
+          v-show="listadostore.length > 0"
           v-bind:porcentaje="Porcentaje"
         ></barra-progreso>
       </div>
@@ -167,6 +167,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
     <script src="./js/main.js"></script>
   </body>
 </html>

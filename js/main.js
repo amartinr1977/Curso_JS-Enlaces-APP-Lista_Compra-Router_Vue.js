@@ -15,7 +15,10 @@ Vue.component("comp-elementolista", {
 
 Vue.component("barra-progreso", {
   template: "#plantilla-barra-progreso",
-  props: ["porcentaje"]
+  props: ["porcentaje"],
+  computed: {
+    ...Vuex.mapState(["mititulo", "mitexto", "contador"])
+  }
 });
 
 Vue.component("mensaje-error", {
@@ -26,21 +29,24 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
   template: "#t-listado-compra",
   data() {
     return {
-      titulo: "Lista de la Compra con Vue.js",
+      //titulo: "Mi Lista de la Compra con Vue.js",
+      //titulo: store.state.mititulo,
       articulo: "",
       cantidad: 0,
-      prioridad: "Baja",
-      listado: listadoglobal
+      prioridad: "Baja"
+      //listado: this.listadostore
     };
   },
   computed: {
+    ...Vuex.mapState(["mititulo", "mitexto", "listadostore"]),
     ComprasHechas() {
-      return this.listado.filter(elemento => elemento.estado);
+      return this.listadostore.filter(elemento => elemento.estado);
     },
     Porcentaje() {
-      return ((this.ComprasHechas.length * 100) / this.listado.length).toFixed(
-        2
-      );
+      return (
+        (this.ComprasHechas.length * 100) /
+        this.listadostore.length
+      ).toFixed(2);
     },
     PorcentajeEnTantoPorCien() {
       return this.Porcentaje.toString() + "%";
@@ -57,8 +63,8 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
           .toString()
           .substring(2, 9)
       };
-      this.listado.push(elemento);
-      console.log(this.listado);
+      this.listadostore.push(elemento);
+      console.log(this.listadostore);
       this.ResetValores();
     },
     ResetValores() {
@@ -66,10 +72,11 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
       this.cantidad = 0;
       this.prioridad = "Baja";
     },
-    Eliminar(item) {
-      indice = this.listado.indexOf(item);
-      this.listado.splice(indice, 1);
-    },
+    ...Vuex.mapMutations(["EliminarStore"]),
+    /* Eliminar(item) {
+      indice = this.listadostore.indexOf(item);
+      this.listadostore.splice(indice, 1);
+    }, */
     CambiarEstado(item) {
       item.estado = !item.estado;
     }
@@ -79,13 +86,15 @@ const ListadoCompra = Vue.component("comp-listado-compra", {
 const ListadoComprasHechas = Vue.component("comp-listado-comprashechas", {
   data() {
     return {
-      titulo: "Lista de Compras Hechas",
-      listado: listadoglobal
+      titulo: "Lista de Compras Hechas"
+      //listado: listadoglobal
     };
   },
   computed: {
+    ...Vuex.mapState(["mititulo", "mitexto", "listadostore"]),
+    ...Vuex.mapGetters(["listadoComprasHechasStore"]),
     ListadoHechas() {
-      return this.listado.filter(item => item.estado);
+      return this.listadostore.filter(item => item.estado);
     }
   },
   /*html*/
@@ -98,7 +107,7 @@ const ListadoComprasHechas = Vue.component("comp-listado-comprashechas", {
     </h1>
     </div>
     <comp-elementolista
-      v-for="(articulo, index) in ListadoHechas" :key="index"
+      v-for="(articulo, index) in listadoComprasHechasStore" :key="index"
       :producto="articulo">
     </comp-elementolista>
   </div>
@@ -134,8 +143,32 @@ const router = new VueRouter({
   routes: misrutas
 });
 
+const store = new Vuex.Store({
+  state: {
+    mititulo: "Mi Lista de la Compra con Vue.js",
+    mitexto: "",
+    contador: 0,
+    listadostore: []
+  },
+  getters: {
+    listadoComprasHechasStore(state) {
+      return state.listadostore.filter(item => item.estado);
+    }
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    },
+    EliminarStore(state, item) {
+      indice = state.listadostore.indexOf(item);
+      state.listadostore.splice(indice, 1);
+    }
+  }
+});
+
 const miapp = new Vue({
   router,
+  store,
   el: "#contenedor",
   data: {},
   computed: {},
